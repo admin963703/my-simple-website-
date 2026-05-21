@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Profile</title>
+<style>
+body{font-family:Arial;text-align:center;padding:40px;}
+img{width:100px;height:100px;border-radius:50%;}
+input{display:block;margin:10px auto;padding:10px;width:200px;}
+</style>
+</head>
+
+<body>
+
+<h2>Profile</h2>
+
+<img id="preview" src="https://via.placeholder.com/100">
+
+<input type="file" onchange="loadImg(event)">
+<input id="username" placeholder="Name">
+
+<button onclick="save()">Save</button>
+
+<script>
+
+window.onload=function(){
+document.getElementById("username").value=localStorage.getItem("username")||"";
+document.getElementById("preview").src=localStorage.getItem("profilePic")||"https://via.placeholder.com/100";
+};
+
+function loadImg(event){
+let reader=new FileReader();
+reader.onload=function(){
+document.getElementById("preview").src=reader.result;
+}
+reader.readAsDataURL(event.target.files[0]);
+}
+
+function save(){
+localStorage.setItem("username",username.value);
+localStorage.setItem("profilePic",preview.src);
+alert("Saved");
+}
+
+</script>
+
+</body>
+</html>
