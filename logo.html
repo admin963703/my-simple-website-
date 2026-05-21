@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Logo Page</title>
+
+<style>
+body{
+    margin:0;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:#000;   /* 🖤 BLACK BACKGROUND */
+    font-family:Arial;
+    overflow:hidden;
+}
+
+/* glowing background effect */
+body::before{
+    content:"";
+    position:absolute;
+    width:300px;
+    height:300px;
+    background:linear-gradient(45deg,#0072ff,#00c6ff);
+    filter:blur(120px);
+    animation:move 4s infinite alternate;
+    z-index:0;
+}
+
+@keyframes move{
+    from{transform:translate(-100px,-100px);}
+    to{transform:translate(100px,100px);}
+}
+
+/* LOGO BOX */
+.logo-box{
+    text-align:center;
+    z-index:1;
+    animation:fadeIn 2s ease;
+}
+
+/* LOGO IMAGE */
+.logo-box img{
+    width:130px;
+    height:130px;
+    border-radius:20px;
+    animation:zoom 2s ease infinite;
+    box-shadow:0 0 20px #00c6ff;
+}
+
+/* TITLE */
+.logo-box h1{
+    color:white;
+    margin-top:15px;
+    letter-spacing:2px;
+    text-shadow:0 0 10px #0072ff;
+}
+
+/* LOADING DOTS */
+.dots{
+    margin-top:10px;
+    color:#00c6ff;
+    font-size:20px;
+}
+
+.dots span{
+    animation:blink 1.5s infinite;
+}
+
+.dots span:nth-child(2){ animation-delay:0.2s; }
+.dots span:nth-child(3){ animation-delay:0.4s; }
+
+/* ANIMATIONS */
+@keyframes zoom{
+    0%{transform:scale(1);}
+    50%{transform:scale(1.2);}
+    100%{transform:scale(1);}
+}
+
+@keyframes fadeIn{
+    from{opacity:0; transform:translateY(30px);}
+    to{opacity:1; transform:translateY(0);}
+}
+
+@keyframes blink{
+    0%,100%{opacity:0;}
+    50%{opacity:1;}
+}
+</style>
+</head>
+
+<body>
+
+<div class="logo-box">
+
+    <!-- YOUR LOGO -->
+    <img src="logo.png" alt="Logo">
+
+    <h1>My Website</h1>
+
+    <div class="dots">
+        Loading<span>.</span><span>.</span><span>.</span>
+    </div>
+
+</div>
+
+<script>
+    // AUTO REDIRECT AFTER 3 SECONDS
+    setTimeout(() => {
+        window.location.href = "login.html";
+    }, 3000);
+</script>
+
+</body>
+</html>
