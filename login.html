@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Login Page</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #000;
+}
+
+/* LOGIN BOX */
+.login-box {
+    width: 320px;
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(12px);
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0, 114, 255, 0.4);
+    text-align: center;
+    animation: fadeIn 1s ease;
+}
+
+/* LOGO */
+.logo {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 10px;
+    border-radius: 15px;
+    animation: zoom 2s infinite;
+}
+
+/* ANIMATION */
+@keyframes zoom {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+h2 {
+    color: white;
+    margin-bottom: 20px;
+}
+
+select, input {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 8px;
+    outline: none;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 8px;
+    background: #0072ff;
+    color: white;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: #0055cc;
+    transform: scale(1.03);
+}
+
+p {
+    margin-top: 10px;
+    color: yellow;
+}
+</style>
+</head>
+
+<body>
+
+<div class="login-box">
+
+    <!-- 🔥 LOGO ADDED HERE -->
+    <img src="logo.png" alt="Logo" class="logo">
+
+    <h2>Secure Login</h2>
+
+    <select id="role">
+        <option value="user">User</option>
+        <option value="admin">Admin</option>
+    </select>
+
+    <input id="username" type="text" placeholder="Username">
+    <input id="password" type="password" placeholder="Password">
+
+    <button onclick="login()">Login</button>
+
+    <p id="msg"></p>
+</div>
+
+<script>
+function login() {
+
+    let user = document.getElementById("username").value.trim();
+    let pass = document.getElementById("password").value.trim();
+    let role = document.getElementById("role").value;
+    let msg = document.getElementById("msg");
+
+    if (user === "" || pass === "") {
+        msg.innerText = "⚠ Please fill all fields";
+        return;
+    }
+
+    if (role === "admin" && user === "admin" && pass === "admin123") {
+        localStorage.setItem("username", user);
+        localStorage.setItem("role", role);
+        window.location.href = "home.html";
+    }
+    else if (role === "user" && user === "user" && pass === "1234") {
+        localStorage.setItem("username", user);
+        localStorage.setItem("role", role);
+        window.location.href = "home.html";
+    }
+    else {
+        msg.innerText = "❌ Invalid Username or Password";
+    }
+}
+</script>
+
+</body>
+</html>
