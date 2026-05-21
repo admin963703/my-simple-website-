@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Business Order Search System</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    font-family:Arial;
+    box-sizing:border-box;
+}
+
+body{
+    background:#f4f6f9;
+    display:flex;
+}
+
+/* SIDEBAR */
+.sidebar{
+    width:180px;
+    height:100vh;
+    background:linear-gradient(180deg,#0072ff,#00c6ff);
+    color:white;
+    padding:15px;
+    position:fixed;
+}
+
+.sidebar h2{
+    text-align:center;
+    margin-bottom:20px;
+}
+
+.sidebar a{
+    display:block;
+    color:white;
+    text-decoration:none;
+    padding:10px;
+    border-radius:6px;
+}
+
+.sidebar a:hover{
+    background:rgba(255,255,255,0.2);
+}
+
+/* MAIN */
+.main{
+    margin-left:180px;
+    padding:20px;
+    width:100%;
+}
+
+/* SEARCH BOX */
+.search-box{
+    display:flex;
+    gap:10px;
+    margin-bottom:20px;
+}
+
+.search-box input{
+    flex:1;
+    padding:10px;
+    border-radius:8px;
+    border:1px solid #ccc;
+}
+
+.search-box button{
+    padding:10px 15px;
+    background:#0072ff;
+    color:white;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+/* ORDER FORM */
+.form{
+    background:white;
+    padding:15px;
+    border-radius:10px;
+    margin-bottom:20px;
+}
+
+.form input, .form select{
+    width:100%;
+    padding:10px;
+    margin:8px 0;
+}
+
+/* ORDERS */
+.order{
+    background:white;
+    padding:15px;
+    margin-bottom:10px;
+    border-radius:10px;
+}
+
+.badge{
+    padding:5px 10px;
+    border-radius:5px;
+    color:white;
+    font-size:12px;
+}
+
+.pending{background:orange;}
+.completed{background:green;}
+.cancelled{background:red;}
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <h2>menu</h2>
+    <a href="home.html">🏠 Home</a>
+    <a href="orders.html">📦 Orders</a>
+    <a href="search.html">🔎 Search</a>
+    <a href="settings.html">⚙ Settings</a>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+<h2>Business Order Search Engine</h2>
+
+<!-- SEARCH ENGINE -->
+<div class="search-box">
+    <input id="search" placeholder="Search orders, customers, products...">
+    <button onclick="searchOrders()">Search</button>
+</div>
+
+<!-- ORDER FORM -->
+<div class="form">
+    <h3>Create Order</h3>
+
+    <input id="customer" placeholder="Customer Name">
+    <input id="product" placeholder="Product Name">
+
+    <select id="status">
+        <option value="pending">Pending</option>
+        <option value="completed">Completed</option>
+        <option value="cancelled">Cancelled</option>
+    </select>
+
+    <button onclick="addOrder()">Add Order</button>
+</div>
+
+<!-- ORDER LIST -->
+<div id="orders"></div>
+
+</div>
+
+<script>
+
+let orders = JSON.parse(localStorage.getItem("orders")) || [];
+
+/* ADD ORDER */
+function addOrder(){
+
+    let order = {
+        customer: customer.value,
+        product: product.value,
+        status: status.value
+    };
+
+    orders.push(order);
+    localStorage.setItem("orders", JSON.stringify(orders));
+
+    render();
+}
+
+/* DISPLAY */
+function render(list = orders){
+
+    let container = document.getElementById("orders");
+    container.innerHTML = "";
+
+    list.forEach((o,i)=>{
+
+        container.innerHTML += `
+        <div class="order">
+            <b>${o.customer}</b> ordered <b>${o.product}</b>
+            <span class="badge ${o.status}">${o.status}</span>
+        </div>
+        `;
+    });
+}
+
+/* SEARCH ENGINE */
+function searchOrders(){
+
+    let text = search.value.toLowerCase();
+
+    let filtered = orders.filter(o =>
+        o.customer.toLowerCase().includes(text) ||
+        o.product.toLowerCase().includes(text) ||
+        o.status.toLowerCase().includes(text)
+    );
+
+    render(filtered);
+}
+
+render();
+
+</script>
+
+</body>
+</html>
