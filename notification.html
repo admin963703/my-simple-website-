@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Notifications</title>
+
+<style>
+body{
+    font-family:Arial;
+    background:#f4f6f9;
+    display:flex;
+    justify-content:center;
+    padding-top:50px;
+}
+
+/* BOX */
+.box{
+    width:420px;
+    background:white;
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.2);
+    animation:fadeIn 0.8s ease;
+    position:relative;
+}
+
+@keyframes fadeIn{
+    from{opacity:0; transform:translateY(30px);}
+    to{opacity:1; transform:translateY(0);}
+}
+
+h2{
+    text-align:center;
+    color:#0072ff;
+    animation:bell 1.5s infinite;
+}
+
+@keyframes bell{
+    0%{transform:rotate(0);}
+    25%{transform:rotate(10deg);}
+    50%{transform:rotate(-10deg);}
+    100%{transform:rotate(0);}
+}
+
+input{
+    width:100%;
+    padding:10px;
+    margin:10px 0;
+    border-radius:8px;
+    border:1px solid #ccc;
+}
+
+button{
+    width:100%;
+    padding:10px;
+    background:#0072ff;
+    color:white;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+button:hover{
+    background:#0055cc;
+    transform:scale(1.03);
+}
+
+ul{
+    list-style:none;
+    padding:0;
+    margin-top:15px;
+}
+
+li{
+    background:#e9f2ff;
+    padding:10px;
+    margin:8px 0;
+    border-radius:8px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    animation:pop 0.3s ease;
+}
+
+@keyframes pop{
+    from{transform:scale(0.8); opacity:0;}
+    to{transform:scale(1); opacity:1;}
+}
+
+.delete{
+    background:red;
+    color:white;
+    border:none;
+    padding:5px 10px;
+    border-radius:5px;
+    cursor:pointer;
+}
+
+.time{
+    font-size:10px;
+    color:gray;
+}
+
+.empty{
+    text-align:center;
+    color:gray;
+    margin-top:10px;
+}
+
+.clear{
+    background:black;
+    margin-top:10px;
+}
+
+/* BACK BUTTON AT BOTTOM */
+.back-btn{
+    margin-top:15px;
+    width:100%;
+    padding:10px;
+    background:#0072ff;
+    border-radius:8px;
+    font-size:15px;
+    transition:0.3s;
+    position:relative;
+    overflow:hidden;
+}
+
+.back-btn:hover{
+    background:#0055cc;
+    transform:scale(1.03);
+}
+
+/* RIPPLE EFFECT */
+.ripple{
+    position:absolute;
+    background:rgba(255,255,255,0.6);
+    border-radius:50%;
+    transform:scale(0);
+    animation:ripple 0.6s linear;
+    pointer-events:none;
+}
+
+@keyframes ripple{
+    to{
+        transform:scale(4);
+        opacity:0;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+<h2>🔔 Notifications</h2>
+
+<input type="text" id="msg" placeholder="Enter notification">
+
+<button onclick="addNotification()">Add Notification</button>
+<button class="clear" onclick="clearAll()">Clear All</button>
+
+<ul id="list"></ul>
+
+<p id="empty" class="empty"></p>
+
+<!-- BACK BUTTON MOVED TO BOTTOM -->
+<a href="home.html">Back</a>
+
+</div>
+
+<script>
+
+let notifications = JSON.parse(localStorage.getItem("notifications")) || [];
+
+function render(){
+
+    let list = document.getElementById("list");
+    let empty = document.getElementById("empty");
+
+    list.innerHTML = "";
+
+    if(notifications.length === 0){
+        empty.innerText = "No notifications yet 🔕";
+    } else {
+        empty.innerText = "";
+    }
+
+    notifications.forEach((n,index)=>{
+
+        list.innerHTML += `
+            <li>
+                <div>
+                    <b>${n.text}</b><br>
+                    <span class="time">${n.time}</span>
+                </div>
+                <button class="delete" onclick="remove(${index})">X</button>
+            </li>
+        `;
+    });
+
+    localStorage.setItem("notifications",JSON.stringify(notifications));
+}
+
+function addNotification(){
+
+    let input = document.getElementById("msg");
+
+    if(input.value.trim() === "") return;
+
+    let now = new Date().toLocaleString();
+
+    notifications.unshift({
+        text: input.value,
+        time: now
+    });
+
+    input.value = "";
+    render();
+}
+
+function remove(index){
+    notifications.splice(index,1);
+    render();
+}
+
+function clearAll(){
+    notifications = [];
+    render();
+}
+
+/* BACK BUTTON FUNCTION + RIPPLE */
+function goBack(e){
+    window.history.back();
+
+    const btn = e.currentTarget;
+    const circle = document.createElement("span");
+
+    const size = Math.max(btn.clientWidth, btn.clientHeight);
+    circle.style.width = circle.style.height = size + "px";
+
+    const rect = btn.getBoundingClientRect();
+    circle.style.left = (e.clientX - rect.left - size/2) + "px";
+    circle.style.top = (e.clientY - rect.top - size/2) + "px";
+
+    circle.classList.add("ripple");
+    btn.appendChild(circle);
+
+    setTimeout(()=>circle.remove(),600);
+}
+
+render();
+
+</script>
+
+</body>
+</html>
