@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Car Showroom System</title>
+
+<style>
+body{
+    font-family:Arial;
+    background:#f4f6f9;
+    display:flex;
+    justify-content:center;
+    padding:30px;
+}
+
+.box{
+    width:600px;
+    background:white;
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.2);
+}
+
+h2{
+    text-align:center;
+    color:#0072ff;
+}
+
+.stats{
+    display:flex;
+    justify-content:space-between;
+    margin:10px 0;
+    font-size:14px;
+}
+
+input, select{
+    width:100%;
+    padding:10px;
+    margin:6px 0;
+    border-radius:8px;
+    border:1px solid #ccc;
+}
+
+button{
+    width:100%;
+    padding:10px;
+    background:#0072ff;
+    color:white;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    margin-top:5px;
+}
+
+button:hover{
+    background:#0055cc;
+}
+
+.search{
+    margin-top:10px;
+}
+
+ul{
+    list-style:none;
+    padding:0;
+}
+
+li{
+    background:#e9f2ff;
+    padding:10px;
+    margin:8px 0;
+    border-radius:8px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.small{
+    font-size:12px;
+    color:gray;
+}
+
+.booked{
+    color:red;
+    font-weight:bold;
+}
+
+.available{
+    color:green;
+    font-weight:bold;
+}
+
+.bill{
+    margin-top:15px;
+    padding:10px;
+    background:#fff3cd;
+    border-radius:8px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+<h2>🚗 Car Showroom System</h2>
+
+<div class="stats">
+    <div>Total Cars: <span id="total">0</span></div>
+    <div>Booked: <span id="booked">0</span></div>
+</div>
+
+<input type="text" id="brand" placeholder="Car Brand">
+<input type="text" id="model" placeholder="Car Model">
+<input type="number" id="price" placeholder="Price">
+
+<button onclick="addCar()">Add Car</button>
+
+<input class="search" type="text" id="search" placeholder="Search cars..." onkeyup="render()">
+
+<ul id="list"></ul>
+
+<div class="bill" id="billBox"></div>
+
+</div>
+
+<script>
+
+let cars = JSON.parse(localStorage.getItem("cars")) || [];
+
+function render(){
+
+    let list = document.getElementById("list");
+    let search = document.getElementById("search").value.toLowerCase();
+
+    list.innerHTML = "";
+
+    let bookedCount = 0;
+
+    cars.forEach((c,index)=>{
+
+        let name = (c.brand + " " + c.model).toLowerCase();
+
+        if(name.includes(search)){
+
+            if(c.booked) bookedCount++;
+
+            list.innerHTML += `
+                <li>
+                    <div>
+                        <b>${c.brand} ${c.model}</b><br>
+                        <span class="small">₹ ${c.price}</span><br>
+                        <span class="${c.booked ? 'booked' : 'available'}">
+                            ${c.booked ? 'Booked' : 'Available'}
+                        </span>
+                    </div>
+
+                    <div>
+                        <button onclick="bookCar(${index})">Book</button>
+                        <button onclick="billCar(${index})">Bill</button>
+                    </div>
+                </li>
+            `;
+        }
+    });
+
+    document.getElementById("total").innerText = cars.length;
+    document.getElementById("booked").innerText = bookedCount;
+
+    localStorage.setItem("cars", JSON.stringify(cars));
+}
+
+function addCar(){
+
+    let brand = document.getElementById("brand").value;
+    let model = document.getElementById("model").value;
+    let price = document.getElementById("price").value;
+
+    if(brand==="" || model==="" || price==="") return;
+
+    cars.push({
+        brand,
+        model,
+        price,
+        booked:false
+    });
+
+    document.getElementById("brand").value="";
+    document.getElementById("model").value="";
+    document.getElementById("price").value="";
+
+    render();
+}
+
+function bookCar(i){
+    if(!cars[i].booked){
+        cars[i].booked = true;
+        alert("Car Booked Successfully!");
+    } else {
+        alert("Already Booked!");
+    }
+    render();
+}
+
+function billCar(i){
+
+    let discount = 10;
+    let price = parseFloat(cars[i].price);
+    let finalPrice = price - (price * discount / 100);
+
+    document.getElementById("billBox").innerHTML = `
+        <h3>🧾 Invoice</h3>
+        <p><b>Car:</b> ${cars[i].brand} ${cars[i].model}</p>
+        <p><b>Original Price:</b> ₹${price}</p>
+        <p><b>Discount:</b> ${discount}%</p>
+        <p><b>Final Price:</b> ₹${finalPrice}</p>
+    `;
+}
+
+render();
+
+</script>
+
+</body>
+</html>
