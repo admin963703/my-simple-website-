@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Advanced Library System</title>
+
+<style>
+body{
+    font-family:Arial;
+    background:#f4f6f9;
+    display:flex;
+    justify-content:center;
+    padding:30px;
+}
+
+.box{
+    width:500px;
+    background:white;
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.2);
+}
+
+h2{
+    text-align:center;
+    color:#0072ff;
+}
+
+.stats{
+    display:flex;
+    justify-content:space-between;
+    margin:10px 0;
+    font-size:14px;
+}
+
+input{
+    width:100%;
+    padding:10px;
+    margin:5px 0;
+    border-radius:8px;
+    border:1px solid #ccc;
+}
+
+button{
+    width:100%;
+    padding:10px;
+    background:#0072ff;
+    color:white;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    margin-top:5px;
+}
+
+button:hover{
+    background:#0055cc;
+}
+
+.search{
+    margin-top:10px;
+    margin-bottom:10px;
+}
+
+ul{
+    list-style:none;
+    padding:0;
+}
+
+li{
+    background:#e9f2ff;
+    padding:10px;
+    margin:8px 0;
+    border-radius:8px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.small{
+    font-size:12px;
+    color:gray;
+}
+
+.btn{
+    width:auto;
+    margin-left:5px;
+    padding:5px 10px;
+    border-radius:5px;
+}
+
+.issue{ background:orange; }
+.return{ background:green; }
+.delete{ background:red; }
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+<h2>📚 Library System</h2>
+
+<div class="stats">
+    <div>Total Books: <span id="total">0</span></div>
+    <div>Issued: <span id="issued">0</span></div>
+</div>
+
+<input type="text" id="book" placeholder="Book Name">
+<input type="text" id="author" placeholder="Author Name">
+<input type="text" id="student" placeholder="Student Name (optional)">
+
+<button onclick="addBook()">Add Book</button>
+
+<input class="search" type="text" id="search" placeholder="Search books..." onkeyup="render()">
+
+<ul id="list"></ul>
+
+</div>
+
+<script>
+
+let books = JSON.parse(localStorage.getItem("books")) || [];
+
+function render(){
+
+    let list = document.getElementById("list");
+    let search = document.getElementById("search").value.toLowerCase();
+
+    let issuedCount = 0;
+
+    list.innerHTML = "";
+
+    books.forEach((b,index)=>{
+
+        if(b.name.toLowerCase().includes(search)){
+
+            if(b.issued) issuedCount++;
+
+            list.innerHTML += `
+                <li>
+                    <div>
+                        <b>${b.name}</b> - ${b.author}<br>
+                        <span class="small">
+                            ${b.issued ? "Issued to: " + b.student : "Available"}
+                        </span>
+                    </div>
+
+                    <div>
+                        <button class="btn issue" onclick="issueBook(${index})">Issue</button>
+                        <button class="btn return" onclick="returnBook(${index})">Return</button>
+                        <button class="btn delete" onclick="deleteBook(${index})">X</button>
+                    </div>
+                </li>
+            `;
+        }
+    });
+
+    document.getElementById("total").innerText = books.length;
+    document.getElementById("issued").innerText = issuedCount;
+
+    localStorage.setItem("books", JSON.stringify(books));
+}
+
+function addBook(){
+
+    let name = document.getElementById("book").value;
+    let author = document.getElementById("author").value;
+
+    if(name === "" || author === "") return;
+
+    books.push({
+        name,
+        author,
+        issued:false,
+        student:""
+    });
+
+    document.getElementById("book").value="";
+    document.getElementById("author").value="";
+
+    render();
+}
+
+function issueBook(i){
+    let student = prompt("Enter student name:");
+    if(student){
+        books[i].issued = true;
+        books[i].student = student;
+        render();
+    }
+}
+
+function returnBook(i){
+    books[i].issued = false;
+    books[i].student = "";
+    render();
+}
+
+function deleteBook(i){
+    books.splice(i,1);
+    render();
+}
+
+render();
+
+</script>
+
+</body>
+</html>
